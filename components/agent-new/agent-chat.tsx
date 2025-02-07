@@ -5,7 +5,7 @@ import { Input } from '@/components/ui/input';
 import type { WalletAnalysis } from '@/lib/types/analysis';
 import type { Message } from '@/lib/types/message';
 import { Send } from 'lucide-react';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { useAccount } from 'wagmi';
 import { AgentAnalysis } from './agent-analysis';
 import { AgentMessage } from './agent-message';
@@ -15,24 +15,6 @@ export function AgentChat() {
   const [isFirstLoad, setIsFirstLoad] = useState(true);
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState('');
-
-  useEffect(() => {
-    if (isConnected && isFirstLoad) {
-      // Simulate analysis time
-      const timer = setTimeout(() => {
-        setIsFirstLoad(false);
-        setMessages([
-          {
-            role: 'agent',
-            content:
-              "I've analyzed your wallet and found some interesting opportunities. What would you like to know about?",
-          },
-        ]);
-      }, 4000); // Show animation for 4 seconds
-
-      return () => clearTimeout(timer);
-    }
-  }, [isConnected, isFirstLoad]);
 
   const handleSend = () => {
     if (!input.trim()) return;

@@ -2,12 +2,14 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import type { Message } from '@/lib/types/message';
 import { cn } from '@/lib/utils';
 import { MessageContent } from '../messages/message-content';
+import { LoadingMessage } from './messages/loading-message';
 
 interface AgentMessageProps {
   message: Message;
+  isTyping?: boolean;
 }
 
-export function AgentMessage({ message }: AgentMessageProps) {
+export function AgentMessage({ message, isTyping }: AgentMessageProps) {
   return (
     <div
       className={cn(
@@ -33,7 +35,8 @@ export function AgentMessage({ message }: AgentMessageProps) {
           message.type === 'error' ? 'bg-red-50 text-red-500' : undefined,
         )}
       >
-        <MessageContent message={message} />
+        {!isTyping && <MessageContent message={message} />}
+        {isTyping && <LoadingMessage />}
       </div>
     </div>
   );
