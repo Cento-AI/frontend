@@ -1,10 +1,11 @@
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Skeleton } from "@/components/ui/skeleton"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Skeleton } from '@/components/ui/skeleton';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { ContainerLayout } from '../layout/container-layout';
 
 export function AnalysisSection() {
   return (
-    <div className="container mx-auto px-4 py-12">
+    <ContainerLayout>
       <Card>
         <CardHeader>
           <CardTitle>Portfolio Analysis</CardTitle>
@@ -35,6 +36,6 @@ export function AnalysisSection() {
           </Tabs>
         </CardContent>
       </Card>
-    </div>
-  )
-} 
+    </ContainerLayout>
+  );
+}
