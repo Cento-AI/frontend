@@ -1,36 +1,33 @@
-import type { Opportunity } from '../../lib/types/analysis';
-import type { Message } from '../../lib/types/message';
-import { OpportunityMessage } from '../agent-new/messages/opportunity-message';
+import { TypeWriter } from '@/components/ui/type-writer';
+import type { WalletAnalysis } from '@/lib/types/analysis';
+import type { Message } from '@/lib/types/message';
+import type { SuggestedAnswer } from '@/lib/types/suggested-answer';
+import { AnalysisMessage } from './analysis-message';
 
 interface MessageContentProps {
-  message: Message;
+  message: Message<unknown>;
+  onComplete?: (suggestedAnswers?: SuggestedAnswer[]) => void;
 }
 
-export function MessageContent({ message }: MessageContentProps) {
-  // Handle different message types
+export function MessageContent({ message, onComplete }: MessageContentProps) {
   switch (message.type) {
     case 'opportunity':
+      return null;
+
+    case 'analysis':
       return (
-        <OpportunityMessage opportunities={message.data as Opportunity[]} />
+        <div className="space-y-3">
+          <AnalysisMessage message={message as Message<WalletAnalysis>} />
+        </div>
       );
 
     case 'error':
-      return (
-        <div className="p-4 text-red-500 bg-red-50 rounded-lg">
-          {message.content}
-        </div>
-      );
-
-    case 'analysis':
-      // You can create and return an analysis component here
-      return null;
-
     case 'default':
     default:
-      return (
-        <div className="prose dark:prose-invert max-w-none">
-          {message.content}
-        </div>
+      return message.role === 'agent' ? (
+        <TypeWriter message={message} onComplete={onComplete} />
+      ) : (
+        <>{message.content}</>
       );
   }
 }

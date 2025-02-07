@@ -1,19 +1,35 @@
 import { TypeWriter } from '@/components/ui/type-writer';
 import type { WalletAnalysis } from '@/lib/types/analysis';
+import type { Message } from '@/lib/types/message';
 import { useState } from 'react';
 import { OpportunityContainer } from './opportunity-container';
 
 interface AnalysisMessageProps {
-  analysis: WalletAnalysis;
+  message: Message<WalletAnalysis>;
 }
 
-export function AnalysisMessage({ analysis }: AnalysisMessageProps) {
+export function AnalysisMessage({ message }: AnalysisMessageProps) {
+  const { data: analysis, content } = message;
   const [showOpportunities, setShowOpportunities] = useState(false);
+
+  if (!analysis) {
+    <div className="space-y-6">
+      <TypeWriter
+        message={{
+          role: 'agent',
+          content:
+            'There was an error finding your opportunities, try again later',
+          type: 'error',
+        }}
+        onComplete={() => setShowOpportunities(true)}
+      />
+    </div>;
+  }
 
   return (
     <div className="space-y-6">
       <TypeWriter
-        content="Based on my analysis, here are the opportunities I found:"
+        message={message}
         onComplete={() => setShowOpportunities(true)}
       />
 

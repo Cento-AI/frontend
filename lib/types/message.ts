@@ -1,3 +1,5 @@
+import type { SuggestedAnswer } from './suggested-answer';
+
 export type MessageRole = 'user' | 'agent' | 'system' | 'error';
 
 export type MessageComponentType =
@@ -6,9 +8,10 @@ export type MessageComponentType =
   | 'analysis'
   | 'error';
 
-export interface Message {
+export interface Message<T> {
   role: MessageRole;
   content: string;
   type?: MessageComponentType;
-  data?: unknown; // For passing structured data to special components
+  data?: T;
+  suggestedAnswers?: SuggestedAnswer[];
 }

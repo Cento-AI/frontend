@@ -1,15 +1,21 @@
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import type { Message } from '@/lib/types/message';
+import type { SuggestedAnswer } from '@/lib/types/suggested-answer';
 import { cn } from '@/lib/utils';
-import { MessageContent } from '../messages/message-content';
 import { LoadingMessage } from './messages/loading-message';
+import { MessageContent } from './messages/message-content';
 
-interface AgentMessageProps {
-  message: Message;
+interface AgentMessageProps<T> {
+  message: Message<T>;
   isTyping?: boolean;
+  onComplete?: (suggestedAnswers?: SuggestedAnswer[]) => void;
 }
 
-export function AgentMessage({ message, isTyping }: AgentMessageProps) {
+export function AgentMessage<T>({
+  message,
+  isTyping,
+  onComplete,
+}: AgentMessageProps<T>) {
   return (
     <div
       className={cn(
@@ -35,7 +41,9 @@ export function AgentMessage({ message, isTyping }: AgentMessageProps) {
           message.type === 'error' ? 'bg-red-50 text-red-500' : undefined,
         )}
       >
-        {!isTyping && <MessageContent message={message} />}
+        {!isTyping && (
+          <MessageContent message={message} onComplete={onComplete} />
+        )}
         {isTyping && <LoadingMessage />}
       </div>
     </div>

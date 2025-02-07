@@ -4,17 +4,22 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import type { WalletAnalysis } from '@/lib/types/analysis';
 import type { Message } from '@/lib/types/message';
+import type { SuggestedAnswer } from '@/lib/types/suggested-answer';
 import { Send } from 'lucide-react';
 import { useState } from 'react';
 import { useAccount } from 'wagmi';
 import { AgentAnalysis } from './agent-analysis';
 import { AgentMessage } from './agent-message';
+import { SuggestedAnswers } from './messages/suggested-answers';
 
 export function AgentChat() {
   const { isConnected } = useAccount();
   const [isFirstLoad, setIsFirstLoad] = useState(true);
-  const [messages, setMessages] = useState<Message[]>([]);
+  const [messages, setMessages] = useState<Message<unknown>[]>([]);
   const [input, setInput] = useState('');
+  const [suggestedAnswers, setSuggestedAnswers] = useState<SuggestedAnswer[]>(
+    [],
+  );
 
   const handleSend = () => {
     if (!input.trim()) return;
@@ -50,6 +55,24 @@ export function AgentChat() {
         data: analysis,
       },
     ]);
+
+    // Add follow-up message after a delay
+    setTimeout(() => {
+      setMessages((prev) => [
+        ...prev,
+        {
+          role: 'agent',
+          content:
+            'Would you like me to help manage your portfolio automatically, or would you prefer to handle these opportunities yourself?',
+          type: 'default',
+          suggestedAnswers: [
+            { text: 'Yes, help manage my portfolio', action: 'auto' },
+            { text: "I'll handle it myself", action: 'manual' },
+            { text: 'Tell me more about the options', action: 'custom' },
+          ],
+        },
+      ]);
+    }, 3000);
   };
 
   const handleAnalysisError = (error: Error) => {
@@ -64,9 +87,23 @@ export function AgentChat() {
     ]);
   };
 
+  const handleSuggestedAnswer = (answer: SuggestedAnswer) => {
+    // Handle the selected answer
+    setMessages([
+      ...messages,
+      { role: 'user', content: answer.text, type: 'default' },
+    ]);
+    console.log('handleSuggestedAnswer', answer);
+    setSuggestedAnswers([]); // Clear suggestions after selection
+
+    if (answer.onClick) {
+      answer.onClick();
+    }
+  };
+
   return (
-    <div className="flex h-full flex-col">
-      <div className="flex-1 overflow-y-auto min-h-0">
+    <div className="grid grid-rows-[1fr_auto] overflow-hidden">
+      <div className="overflow-y-auto">
         <div className="p-4 space-y-4">
           {isConnected ? (
             isFirstLoad ? (
@@ -80,6 +117,11 @@ export function AgentChat() {
                   <AgentMessage
                     key={`${message.role}-${i}`}
                     message={message}
+                    onComplete={(suggestedAnswers) => {
+                      if (suggestedAnswers) {
+                        setSuggestedAnswers(suggestedAnswers);
+                      }
+                    }}
                   />
                 ))}
               </div>
@@ -92,7 +134,13 @@ export function AgentChat() {
         </div>
       </div>
 
-      <div className="shrink-0 border-t p-4">
+      <div className="relative border-t p-4">
+        {suggestedAnswers.length > 0 && (
+          <SuggestedAnswers
+            answers={suggestedAnswers}
+            onSelect={handleSuggestedAnswer}
+          />
+        )}
         <form
           onSubmit={(e) => {
             e.preventDefault();
