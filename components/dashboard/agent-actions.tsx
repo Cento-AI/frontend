@@ -26,7 +26,7 @@ const mockActions = [
 
 export function AgentActions() {
   return (
-    <div className="rounded-lg border p-4">
+    <div className="rounded-lg border bg-card/80 shadow-sm p-4">
       <h2 className="font-medium mb-4">Recent Actions</h2>
       <div className="space-y-4">
         {mockActions.map((action) => (

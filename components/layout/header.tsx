@@ -29,7 +29,7 @@ export function Header() {
   const pathname = usePathname();
 
   return (
-    <header className="border-b">
+    <header className="border-b bg-gradient-to-r from-primary-gradient-from to-primary-gradient-to text-white">
       <div className="container mx-auto flex h-16 items-center justify-between px-4">
         <div className="flex items-center space-x-8">
           <Image src="/logo.png" alt="Cento AI" width={120} height={32} />
@@ -39,10 +39,8 @@ export function Header() {
                 key={item.name}
                 href={item.href}
                 className={cn(
-                  'text-sm font-medium transition-colors hover:text-primary',
-                  pathname === item.href
-                    ? 'text-foreground'
-                    : 'text-muted-foreground',
+                  'text-sm font-medium transition-colors hover:text-white',
+                  pathname === item.href ? 'text-white' : 'text-white/85',
                 )}
               >
                 {item.name}
@@ -55,7 +53,7 @@ export function Header() {
           <Select
             onValueChange={(value) => switchChain({ chainId: Number(value) })}
           >
-            <SelectTrigger className="w-[140px]">
+            <SelectTrigger className="w-[140px] bg-white/10 border-white/20 text-white hover:bg-white/20 transition-colors">
               <SelectValue placeholder="Base" />
             </SelectTrigger>
             <SelectContent>

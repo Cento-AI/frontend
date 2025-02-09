@@ -35,7 +35,7 @@ const mockVault = {
 
 export default function Dashboard() {
   return (
-    <div className="min-h-screen">
+    <div className="min-h-screen bg-gradient-to-b from-background to-primary/5">
       <Header />
       <main className="container mx-auto p-4">
         <h1 className="font-bold mb-6 text-2xl">Dashboard</h1>

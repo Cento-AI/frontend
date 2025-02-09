@@ -20,15 +20,26 @@ const mockData = [
 
 export function ValueChart() {
   return (
-    <div className="rounded-lg border p-4">
-      <h2 className="font-medium mb-4">Portfolio Value</h2>
+    <div className="rounded-lg border bg-card/80 shadow-sm p-4">
+      <h2 className="mb-4 font-medium">Portfolio Value</h2>
       <div className="h-[300px]">
         <ResponsiveContainer width="100%" height="100%">
           <LineChart data={mockData}>
             <XAxis dataKey="date" />
             <YAxis />
             <Tooltip />
-            <Line type="monotone" dataKey="value" stroke="#2563eb" />
+            <Line
+              type="monotone"
+              dataKey="value"
+              stroke="url(#gradient)"
+              strokeWidth={2}
+            />
+            <defs>
+              <linearGradient id="gradient" x1="0" y1="0" x2="1" y2="0">
+                <stop offset="0%" stopColor="#E97451" />
+                <stop offset="100%" stopColor="#8B5CF6" />
+              </linearGradient>
+            </defs>
           </LineChart>
         </ResponsiveContainer>
       </div>

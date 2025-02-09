@@ -2,6 +2,8 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import type { Message } from '@/lib/types/message';
 import type { SuggestedAnswer } from '@/lib/types/suggested-answer';
 import { cn } from '@/lib/utils';
+import { Avatar as OnchainAvatar } from '@coinbase/onchainkit/identity';
+import { useAccount } from 'wagmi';
 import { MessageContent } from './messages/message-content';
 
 interface AgentMessageProps<T> {
@@ -10,6 +12,8 @@ interface AgentMessageProps<T> {
 }
 
 export function AgentMessage<T>({ message, onComplete }: AgentMessageProps<T>) {
+  const { address } = useAccount();
+
   return (
     <div
       className={cn(
@@ -17,15 +21,16 @@ export function AgentMessage<T>({ message, onComplete }: AgentMessageProps<T>) {
         message.role === 'agent' ? 'flex-row' : 'flex-row-reverse',
       )}
     >
-      <Avatar className="h-8 w-8">
-        <AvatarImage
-          src={message.role === 'agent' ? '/agent-avatar.png' : undefined}
-          alt={message.role}
-        />
-        <AvatarFallback>
-          {message.role === 'agent' ? 'AI' : 'You'}
-        </AvatarFallback>
-      </Avatar>
+      {message.role === 'agent' ? (
+        <Avatar className="h-8 w-8">
+          <AvatarImage src="/agent-avatar.png" alt="agent" />
+          <AvatarFallback>AI</AvatarFallback>
+        </Avatar>
+      ) : (
+        <div className="h-8 w-8">
+          <OnchainAvatar address={address} />
+        </div>
+      )}
       <div
         className={cn(
           'rounded-lg px-4 py-2 max-w-[80%]',
