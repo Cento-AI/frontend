@@ -2,6 +2,7 @@
 
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { applyStrategy } from '@/lib/services/apply-strategy';
 import { createVault } from '@/lib/services/create-vault';
 import { getStrategy } from '@/lib/services/get-strategy';
 import type { WalletAnalysis } from '@/lib/types/analysis';
@@ -178,12 +179,12 @@ export function AgentChat() {
               content: "Great! I've created your vault. Here are the details:",
               type: 'vault',
               data: vault,
-            },
-            {
-              role: 'agent',
-              content:
-                "Before we can start implementing your strategy, you'll need to fund your vault. Please select a token to deposit:",
-              type: 'fund',
+              suggestedAnswers: [
+                {
+                  text: 'Fund the vault',
+                  action: 'fund',
+                },
+              ],
             },
           ]);
         } catch (error) {
@@ -198,6 +199,34 @@ export function AgentChat() {
             },
           ]);
         }
+      }
+    } else if (answer.action === 'implement' && address) {
+      try {
+        setLoading(true);
+        const rebalance = await applyStrategy(address);
+        setLoading(false);
+
+        setMessages((prev) => [
+          ...prev,
+          {
+            role: 'agent',
+            content:
+              "I've analyzed your portfolio and prepared a rebalancing strategy:",
+            type: 'implement-strategy',
+            data: rebalance,
+          },
+        ]);
+      } catch (error) {
+        setLoading(false);
+        setMessages((prev) => [
+          ...prev,
+          {
+            role: 'agent',
+            content:
+              'Sorry, I encountered an error while preparing your strategy. Please try again.',
+            type: 'error',
+          },
+        ]);
       }
     }
   };
@@ -219,7 +248,6 @@ export function AgentChat() {
                     key={`${message.role}-${i}`}
                     message={message}
                     onComplete={(suggestedAnswers) => {
-                      console.log('onComplete agent message');
                       if (suggestedAnswers) {
                         setSuggestedAnswers(suggestedAnswers);
                       }

@@ -14,6 +14,7 @@ interface FundMessageProps {
 export function FundMessage({ message, onComplete }: FundMessageProps) {
   const [showFunding, setShowFunding] = useState(false);
   const { data: vault } = message;
+  console.log('vault tokens are', vault);
 
   if (!vault) {
     return (
@@ -34,7 +35,6 @@ export function FundMessage({ message, onComplete }: FundMessageProps) {
         message={message}
         onComplete={() => {
           setShowFunding(true);
-          onComplete?.(message.suggestedAnswers);
         }}
       />
       {showFunding && (
@@ -44,7 +44,14 @@ export function FundMessage({ message, onComplete }: FundMessageProps) {
           </h3>
           <div className="space-y-3">
             {vault.balances.map((token) => (
-              <FundVault key={token.address} token={token} />
+              <FundVault
+                key={token.address}
+                token={token}
+                vaultAddress={vault.vaultAddress}
+                onSuccess={() => {
+                  onComplete?.(message.suggestedAnswers);
+                }}
+              />
             ))}
           </div>
         </div>

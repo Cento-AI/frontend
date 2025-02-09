@@ -1,5 +1,5 @@
 import type { UserVaultData } from '@/lib/types/vault';
-import { formatEther } from 'viem';
+import { formatToken } from '@/lib/utils/format-token';
 
 interface VaultDetailsProps {
   vault: UserVaultData;
@@ -9,10 +9,10 @@ interface VaultDetailsProps {
 export function VaultDetails({ vault, className }: VaultDetailsProps) {
   return (
     <div className={className}>
-      <div className="rounded-lg bg-primary/10 p-4 space-y-4">
+      <div className="bg-primary/10 p-4 rounded-lg space-y-4">
         <div className="flex items-center justify-between">
           <h3 className="font-medium">Vault Details</h3>
-          <span className="text-xs px-2 py-1 rounded-full bg-primary/20 capitalize">
+          <span className="bg-primary/20 capitalize px-2 py-1 rounded-full text-xs">
             {vault.status}
           </span>
         </div>
@@ -38,18 +38,18 @@ export function VaultDetails({ vault, className }: VaultDetailsProps) {
           </div>
 
           {vault.balances.length > 0 && (
-            <div className="pt-2 space-y-2">
+            <div className="space-y-2 pt-2">
               <span className="text-muted-foreground text-sm">Balances:</span>
               <div className="space-y-1">
                 {vault.balances.map((balance) => (
                   <div
-                    key={balance.token}
+                    key={balance.address}
                     className="flex items-center justify-between pl-4"
                   >
-                    {/* TODO Need to clean this a bit, maybe use symbols and decimals */}
-                    <span className="font-mono text-sm">{balance.token}</span>
+                    <span className="font-mono text-sm">{balance.symbol}</span>
                     <span className="text-sm">
-                      {formatEther(balance.balance)} ETH
+                      {formatToken(balance.balance, balance.decimals)}{' '}
+                      {balance.symbol}
                     </span>
                   </div>
                 ))}

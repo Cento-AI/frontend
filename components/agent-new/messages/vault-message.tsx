@@ -5,6 +5,7 @@ import type { SuggestedAnswer } from '@/lib/types/suggested-answer';
 import type { UserVaultData } from '@/lib/types/vault';
 import { useState } from 'react';
 import { ErrorMessage } from './error-message';
+import { FundMessage } from './fund-message';
 
 interface VaultMessageProps {
   message: Message<UserVaultData>;
@@ -13,8 +14,11 @@ interface VaultMessageProps {
 
 export function VaultMessage({ message, onComplete }: VaultMessageProps) {
   const [showVault, setShowVault] = useState(false);
-  const { data: vault, suggestedAnswers } = message;
-
+  const { data: vault } = message;
+  const hasFundedVault = vault?.balances.some(
+    (balance) => balance.balance > BigInt(0),
+  );
+  console.log('show vault', showVault);
   if (!vault) {
     return (
       <ErrorMessage
@@ -34,10 +38,27 @@ export function VaultMessage({ message, onComplete }: VaultMessageProps) {
         message={message}
         onComplete={() => {
           setShowVault(true);
-          onComplete?.(suggestedAnswers);
         }}
       />
       {showVault && <VaultDetails vault={vault} />}
+      {showVault && !hasFundedVault && (
+        <FundMessage
+          message={{
+            ...message,
+            content:
+              "Before we can start implementing your strategy, you'll need to fund your vault. Please select a token to deposit:",
+            data: vault,
+          }}
+          onComplete={() => {
+            onComplete?.([
+              {
+                text: "Let's start investing my funds",
+                action: 'implement',
+              },
+            ]);
+          }}
+        />
+      )}
     </div>
   );
 }

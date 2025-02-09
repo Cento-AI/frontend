@@ -7,6 +7,7 @@ import type { UserVaultData } from '@/lib/types/vault';
 import { AnalysisMessage } from './analysis-message';
 import { ErrorMessage } from './error-message';
 import { FundMessage } from './fund-message';
+import { ImplementStrategyMessage } from './implement-strategy-message';
 import { StrategyMessage } from './strategy-message';
 import { VaultMessage } from './vault-message';
 
@@ -65,5 +66,13 @@ export function MessageContent({ message, onComplete }: MessageContentProps) {
 
     case 'fund':
       return <FundMessage message={message} onComplete={onComplete} />;
+
+    case 'implement-strategy':
+      return (
+        <ImplementStrategyMessage
+          message={message as Message<PortfolioRebalance>}
+          onComplete={onComplete}
+        />
+      );
   }
 }

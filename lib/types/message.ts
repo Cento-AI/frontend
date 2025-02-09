@@ -9,6 +9,7 @@ export type MessageComponentType =
   | 'get-strategy'
   | 'vault'
   | 'fund'
+  | 'implement-strategy'
   | 'error';
 
 export interface Message<T> {
