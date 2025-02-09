@@ -2,7 +2,7 @@
 
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { applyStrategy } from '@/lib/services/apply-strategy';
+import { confirmStrategy } from '@/lib/services/confirm-strategy';
 import { createVault } from '@/lib/services/create-vault';
 import { getStrategy } from '@/lib/services/get-strategy';
 import type { WalletAnalysis } from '@/lib/types/analysis';
@@ -200,22 +200,29 @@ export function AgentChat() {
           ]);
         }
       }
-    } else if (answer.action === 'implement' && address) {
+    } else if (answer.action === 'apply' && address) {
       try {
         setLoading(true);
-        const rebalance = await applyStrategy(address);
-        setLoading(false);
+        // Get the rebalance data from the last message
+        const lastMessage = messages[messages.length - 1];
+        if (lastMessage.type === 'implement-strategy' && lastMessage.data) {
+          const result = await confirmStrategy(
+            address,
+            lastMessage.data.suggestedActions,
+          );
+          setLoading(false);
 
-        setMessages((prev) => [
-          ...prev,
-          {
-            role: 'agent',
-            content:
-              "I've analyzed your portfolio and prepared a rebalancing strategy:",
-            type: 'implement-strategy',
-            data: rebalance,
-          },
-        ]);
+          setMessages((prev) => [
+            ...prev,
+            {
+              role: 'agent',
+              content:
+                result.result[0] ||
+                'Strategy has been successfully applied! Your portfolio is now being managed according to your preferences.',
+              type: 'default',
+            },
+          ]);
+        }
       } catch (error) {
         setLoading(false);
         setMessages((prev) => [
@@ -223,7 +230,7 @@ export function AgentChat() {
           {
             role: 'agent',
             content:
-              'Sorry, I encountered an error while preparing your strategy. Please try again.',
+              'Sorry, I encountered an error while applying your strategy. Please try again.',
             type: 'error',
           },
         ]);

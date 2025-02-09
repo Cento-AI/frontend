@@ -7,6 +7,8 @@ export interface SuggestedAnswer {
     | 'proceed'
     | 'retry'
     | 'apply'
-    | 'later';
+    | 'later'
+    | 'fund'
+    | 'implement';
   onClick?: () => void;
 }

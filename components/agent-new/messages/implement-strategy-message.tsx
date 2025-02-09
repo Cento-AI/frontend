@@ -35,8 +35,13 @@ export function ImplementStrategyMessage({
 
   return (
     <div className="space-y-6">
+      <TypeWriter message={message} />
+      {showRebalance && <RebalanceDetails rebalance={rebalance} />}
       <TypeWriter
-        message={message}
+        message={{
+          ...message,
+          content: rebalance.explanation,
+        }}
         onComplete={() => {
           setShowRebalance(true);
           onComplete?.([
@@ -45,7 +50,6 @@ export function ImplementStrategyMessage({
           ]);
         }}
       />
-      {showRebalance && <RebalanceDetails rebalance={rebalance} />}
     </div>
   );
 }

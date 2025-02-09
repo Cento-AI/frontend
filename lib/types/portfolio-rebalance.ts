@@ -10,4 +10,5 @@ export interface PortfolioRebalance {
     }>;
   };
   suggestedActions: StrategyAction[];
+  explanation: string;
 }
