@@ -34,7 +34,7 @@ export function RebalanceDetails({
           <div className="flex items-center justify-between">
             <span className="text-muted-foreground text-sm">Total Value:</span>
             <span className="font-medium">
-              ${formatToken(BigInt(rebalance.currentPortfolio.totalValue), 2)}
+              ${rebalance.currentPortfolio.totalValue}
             </span>
           </div>
 
@@ -54,8 +54,7 @@ export function RebalanceDetails({
                       BigInt(asset.balance),
                       getTokenDecimals(asset.symbol),
                     )}{' '}
-                    {asset.symbol} ($
-                    {formatToken(BigInt(asset.value), 2)})
+                    {asset.symbol} (${asset.value})
                   </span>
                 </div>
               ))}

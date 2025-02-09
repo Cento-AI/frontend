@@ -1,12 +1,12 @@
 import { TypeWriter } from '@/components/ui/type-writer';
 import type { WalletAnalysis } from '@/lib/types/analysis';
 import type { Message } from '@/lib/types/message';
+import type { PortfolioRebalance } from '@/lib/types/portfolio-rebalance';
 import type { PortfolioStrategy } from '@/lib/types/portfolio-strategy';
 import type { SuggestedAnswer } from '@/lib/types/suggested-answer';
 import type { UserVaultData } from '@/lib/types/vault';
 import { AnalysisMessage } from './analysis-message';
 import { ErrorMessage } from './error-message';
-import { FundMessage } from './fund-message';
 import { ImplementStrategyMessage } from './implement-strategy-message';
 import { StrategyMessage } from './strategy-message';
 import { VaultMessage } from './vault-message';
@@ -63,9 +63,6 @@ export function MessageContent({ message, onComplete }: MessageContentProps) {
           />
         </div>
       );
-
-    case 'fund':
-      return <FundMessage message={message} onComplete={onComplete} />;
 
     case 'implement-strategy':
       return (

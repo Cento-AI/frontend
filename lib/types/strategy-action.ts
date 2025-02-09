@@ -2,6 +2,6 @@ export interface StrategyAction {
   asset: string;
   currentAmount: string;
   targetAmount: string;
-  action: 'deposit' | 'withdraw';
+  action: 'lend_tokens' | 'withdraw_lent';
   protocol: 'aave' | 'compound';
 }

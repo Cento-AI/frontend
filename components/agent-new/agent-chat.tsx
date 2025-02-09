@@ -2,6 +2,7 @@
 
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { applyStrategy } from '@/lib/services/apply-strategy';
 import { confirmStrategy } from '@/lib/services/confirm-strategy';
 import { createVault } from '@/lib/services/create-vault';
 import { getStrategy } from '@/lib/services/get-strategy';
@@ -179,12 +180,6 @@ export function AgentChat() {
               content: "Great! I've created your vault. Here are the details:",
               type: 'vault',
               data: vault,
-              suggestedAnswers: [
-                {
-                  text: 'Fund the vault',
-                  action: 'fund',
-                },
-              ],
             },
           ]);
         } catch (error) {
@@ -199,6 +194,34 @@ export function AgentChat() {
             },
           ]);
         }
+      }
+    } else if (answer.action === 'implement' && address) {
+      try {
+        setLoading(true);
+        const rebalance = await applyStrategy(address);
+        setLoading(false);
+
+        setMessages((prev) => [
+          ...prev,
+          {
+            role: 'agent',
+            content:
+              "I've analyzed your portfolio and prepared a rebalancing strategy:",
+            type: 'implement-strategy',
+            data: rebalance,
+          },
+        ]);
+      } catch (error) {
+        setLoading(false);
+        setMessages((prev) => [
+          ...prev,
+          {
+            role: 'agent',
+            content:
+              'Sorry, I encountered an error while applying your strategy. Please try again.',
+            type: 'error',
+          },
+        ]);
       }
     } else if (answer.action === 'apply' && address) {
       try {

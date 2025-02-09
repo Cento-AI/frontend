@@ -41,7 +41,7 @@ export function StrategyMessage({ message, onComplete }: StrategyMessageProps) {
 
             <div className="space-y-3">
               <div className="flex items-center justify-between">
-                <span className="text-sm text-muted-foreground">
+                <span className="text-muted-foreground text-sm">
                   Risk Level:
                 </span>
                 <span className="font-medium capitalize">
@@ -50,7 +50,7 @@ export function StrategyMessage({ message, onComplete }: StrategyMessageProps) {
               </div>
 
               <div className="space-y-2">
-                <span className="text-sm text-muted-foreground">
+                <span className="text-muted-foreground text-sm">
                   Allocations:
                 </span>
                 <div className="ml-4 space-y-1">
@@ -70,7 +70,7 @@ export function StrategyMessage({ message, onComplete }: StrategyMessageProps) {
               </div>
 
               <div className="space-y-2">
-                <span className="text-sm text-muted-foreground">
+                <span className="text-muted-foreground text-sm">
                   Preferences:
                 </span>
                 <div className="ml-4 space-y-1">

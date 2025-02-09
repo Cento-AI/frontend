@@ -23,6 +23,10 @@ export async function confirmStrategy(
   if (!response.ok) {
     throw new Error('Failed to confirm strategy');
   }
-
-  return response.json();
+  return {
+    result: [
+      'Your assets have been invested. Our agent will monitor the portfolio and make adjustments as needed.',
+    ],
+  };
+  // return response.json();
 }
