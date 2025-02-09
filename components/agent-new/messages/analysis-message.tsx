@@ -8,7 +8,7 @@ import { OpportunityContainer } from './opportunity-container';
 
 interface AnalysisMessageProps {
   message: Message<WalletAnalysis>;
-  onComplete: (suggestedAnswers?: SuggestedAnswer[]) => void;
+  onComplete?: (suggestedAnswers?: SuggestedAnswer[]) => void;
 }
 
 export function AnalysisMessage({ message, onComplete }: AnalysisMessageProps) {
@@ -35,7 +35,7 @@ export function AnalysisMessage({ message, onComplete }: AnalysisMessageProps) {
         message={message}
         onComplete={() => {
           setShowOpportunities(true);
-          onComplete(suggestedAnswers);
+          onComplete?.(suggestedAnswers);
         }}
       />
 

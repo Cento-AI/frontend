@@ -6,7 +6,7 @@ import { useState } from 'react';
 import { ErrorMessage } from './error-message';
 interface StrategyMessageProps {
   message: Message<PortfolioStrategy>;
-  onComplete: (suggestedAnswers?: SuggestedAnswer[]) => void;
+  onComplete?: (suggestedAnswers?: SuggestedAnswer[]) => void;
 }
 
 export function StrategyMessage({ message, onComplete }: StrategyMessageProps) {
@@ -31,7 +31,7 @@ export function StrategyMessage({ message, onComplete }: StrategyMessageProps) {
         message={message}
         onComplete={() => {
           setShowStrategy(true);
-          onComplete(suggestedAnswers);
+          onComplete?.(suggestedAnswers);
         }}
       />
       {showStrategy && (

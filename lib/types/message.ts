@@ -7,6 +7,8 @@ export type MessageComponentType =
   | 'opportunity'
   | 'analysis'
   | 'get-strategy'
+  | 'vault'
+  | 'fund'
   | 'error';
 
 export interface Message<T> {

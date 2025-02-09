@@ -3,9 +3,12 @@ import type { WalletAnalysis } from '@/lib/types/analysis';
 import type { Message } from '@/lib/types/message';
 import type { PortfolioStrategy } from '@/lib/types/portfolio-strategy';
 import type { SuggestedAnswer } from '@/lib/types/suggested-answer';
+import type { UserVaultData } from '@/lib/types/vault';
 import { AnalysisMessage } from './analysis-message';
 import { ErrorMessage } from './error-message';
+import { FundMessage } from './fund-message';
 import { StrategyMessage } from './strategy-message';
+import { VaultMessage } from './vault-message';
 
 interface MessageContentProps {
   message: Message<unknown>;
@@ -49,5 +52,18 @@ export function MessageContent({ message, onComplete }: MessageContentProps) {
           )}
         </div>
       );
+
+    case 'vault':
+      return (
+        <div className="space-y-3">
+          <VaultMessage
+            message={message as Message<UserVaultData>}
+            onComplete={onComplete}
+          />
+        </div>
+      );
+
+    case 'fund':
+      return <FundMessage message={message} onComplete={onComplete} />;
   }
 }

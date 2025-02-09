@@ -2,9 +2,11 @@
 
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { createVault } from '@/lib/services/create-vault';
 import { getStrategy } from '@/lib/services/get-strategy';
 import type { WalletAnalysis } from '@/lib/types/analysis';
 import type { Message } from '@/lib/types/message';
+import type { PortfolioStrategy } from '@/lib/types/portfolio-strategy';
 import type { SuggestedAnswer } from '@/lib/types/suggested-answer';
 import { Send } from 'lucide-react';
 import { useState } from 'react';
@@ -139,7 +141,7 @@ export function AgentChat() {
     ]);
   };
 
-  const handleSuggestedAnswer = (answer: SuggestedAnswer) => {
+  const handleSuggestedAnswer = async (answer: SuggestedAnswer) => {
     setMessages([
       ...messages,
       { role: 'user', content: answer.text, type: 'default' },
@@ -157,6 +159,46 @@ export function AgentChat() {
         },
       ]);
       setIsWaitingForStrategyInput(true);
+    } else if (answer.action === 'proceed' && address) {
+      // Get the strategy from the last message
+      const lastMessage = messages[messages.length - 1];
+      if (lastMessage.type === 'get-strategy' && lastMessage.data) {
+        try {
+          setLoading(true);
+          const vault = await createVault(
+            address,
+            lastMessage.data as PortfolioStrategy,
+          );
+          setLoading(false);
+
+          setMessages((prev) => [
+            ...prev,
+            {
+              role: 'agent',
+              content: "Great! I've created your vault. Here are the details:",
+              type: 'vault',
+              data: vault,
+            },
+            {
+              role: 'agent',
+              content:
+                "Before we can start implementing your strategy, you'll need to fund your vault. Please select a token to deposit:",
+              type: 'fund',
+            },
+          ]);
+        } catch (error) {
+          setLoading(false);
+          setMessages((prev) => [
+            ...prev,
+            {
+              role: 'agent',
+              content:
+                'Sorry, I encountered an error while creating your vault. Please try again.',
+              type: 'error',
+            },
+          ]);
+        }
+      }
     }
   };
 
