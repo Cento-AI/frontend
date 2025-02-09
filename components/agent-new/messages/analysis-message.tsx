@@ -1,36 +1,42 @@
 import { TypeWriter } from '@/components/ui/type-writer';
 import type { WalletAnalysis } from '@/lib/types/analysis';
 import type { Message } from '@/lib/types/message';
+import type { SuggestedAnswer } from '@/lib/types/suggested-answer';
 import { useState } from 'react';
+import { ErrorMessage } from './error-message';
 import { OpportunityContainer } from './opportunity-container';
 
 interface AnalysisMessageProps {
   message: Message<WalletAnalysis>;
+  onComplete: (suggestedAnswers?: SuggestedAnswer[]) => void;
 }
 
-export function AnalysisMessage({ message }: AnalysisMessageProps) {
-  const { data: analysis, content } = message;
+export function AnalysisMessage({ message, onComplete }: AnalysisMessageProps) {
+  const { data: analysis, suggestedAnswers } = message;
   const [showOpportunities, setShowOpportunities] = useState(false);
 
   if (!analysis) {
-    <div className="space-y-6">
-      <TypeWriter
+    return (
+      <ErrorMessage
         message={{
           role: 'agent',
           content:
             'There was an error finding your opportunities, try again later',
           type: 'error',
         }}
-        onComplete={() => setShowOpportunities(true)}
+        onComplete={onComplete}
       />
-    </div>;
+    );
   }
 
   return (
     <div className="space-y-6">
       <TypeWriter
         message={message}
-        onComplete={() => setShowOpportunities(true)}
+        onComplete={() => {
+          setShowOpportunities(true);
+          onComplete(suggestedAnswers);
+        }}
       />
 
       {showOpportunities && (

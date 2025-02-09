@@ -7,7 +7,7 @@ export async function confirmStrategy(
   actions: StrategyAction[],
 ): Promise<AgentResponse> {
   const response = await fetch(
-    `${process.env.NEXT_PUBLIC_API_URL}/api/agent/confirm-strategy`,
+    `${process.env.NEXT_PUBLIC_API_URL}/agent/confirm-strategy`,
     {
       method: 'POST',
       headers: {

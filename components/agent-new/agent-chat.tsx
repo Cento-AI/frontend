@@ -2,6 +2,7 @@
 
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { getStrategy } from '@/lib/services/get-strategy';
 import type { WalletAnalysis } from '@/lib/types/analysis';
 import type { Message } from '@/lib/types/message';
 import type { SuggestedAnswer } from '@/lib/types/suggested-answer';
@@ -10,38 +11,89 @@ import { useState } from 'react';
 import { useAccount } from 'wagmi';
 import { AgentAnalysis } from './agent-analysis';
 import { AgentMessage } from './agent-message';
+import { LoadingMessage } from './messages/loading-message';
 import { SuggestedAnswers } from './messages/suggested-answers';
 
 export function AgentChat() {
-  const { isConnected } = useAccount();
+  const { isConnected, address } = useAccount();
   const [isFirstLoad, setIsFirstLoad] = useState(true);
   const [messages, setMessages] = useState<Message<unknown>[]>([]);
   const [input, setInput] = useState('');
   const [suggestedAnswers, setSuggestedAnswers] = useState<SuggestedAnswer[]>(
     [],
   );
+  const [isWaitingForStrategyInput, setIsWaitingForStrategyInput] =
+    useState(false);
+  const [loading, setLoading] = useState(false);
 
-  const handleSend = () => {
-    if (!input.trim()) return;
+  const handleStrategyDescription = async (description: string) => {
+    if (!address) return;
 
-    setMessages([
-      ...messages,
-      { role: 'user', content: input, type: 'default' },
+    setMessages((prev) => [
+      ...prev,
+      { role: 'user', content: description, type: 'default' },
     ]);
 
-    // Simulate agent response
-    setTimeout(() => {
+    try {
+      setLoading(true);
+      const { strategy } = await getStrategy(address, description);
+      setLoading(false);
       setMessages((prev) => [
         ...prev,
         {
           role: 'agent',
           content:
-            "I'm analyzing your request. As your AI agent, I'll help you find the best opportunities.",
-          type: 'default',
+            "Based on your description, I've created the following investment strategy. Would you like me to proceed with this strategy?",
+          type: 'get-strategy',
+          data: strategy,
+          suggestedAnswers: [
+            { text: 'Yes, proceed with this strategy', action: 'proceed' },
+            {
+              text: 'No, let me describe a different strategy',
+              action: 'retry',
+            },
+          ],
         },
       ]);
-    }, 1000);
+    } catch (error) {
+      setLoading(false);
+      setMessages((prev) => [
+        ...prev,
+        {
+          role: 'agent',
+          content:
+            'I apologize, but I encountered an error while creating your strategy. Please try again.',
+          type: 'error',
+        },
+      ]);
+    }
+  };
 
+  const handleSend = () => {
+    if (!input.trim()) return;
+
+    if (isWaitingForStrategyInput) {
+      handleStrategyDescription(input);
+      setIsWaitingForStrategyInput(false);
+    } else {
+      setMessages([
+        ...messages,
+        { role: 'user', content: input, type: 'default' },
+      ]);
+
+      // Simulate agent response
+      setTimeout(() => {
+        setMessages((prev) => [
+          ...prev,
+          {
+            role: 'agent',
+            content:
+              "I'm analyzing your request. As your AI agent, I'll help you find the best opportunities.",
+            type: 'default',
+          },
+        ]);
+      }, 1000);
+    }
     setInput('');
   };
 
@@ -88,22 +140,29 @@ export function AgentChat() {
   };
 
   const handleSuggestedAnswer = (answer: SuggestedAnswer) => {
-    // Handle the selected answer
     setMessages([
       ...messages,
       { role: 'user', content: answer.text, type: 'default' },
     ]);
-    console.log('handleSuggestedAnswer', answer);
-    setSuggestedAnswers([]); // Clear suggestions after selection
+    setSuggestedAnswers([]);
 
-    if (answer.onClick) {
-      answer.onClick();
+    if (answer.action === 'auto') {
+      setMessages((prev) => [
+        ...prev,
+        {
+          role: 'agent',
+          content:
+            'Great! Please describe your ideal investment strategy. For example: "I want a conservative strategy focused on stablecoin lending with 70% in lending and 30% in liquidity pools, preferring USDC with minimum 4% APY"',
+          type: 'default',
+        },
+      ]);
+      setIsWaitingForStrategyInput(true);
     }
   };
 
   return (
     <div className="grid grid-rows-[1fr_auto] overflow-hidden">
-      <div className="overflow-y-auto">
+      <div className="overflow-y-auto pb-28">
         <div className="p-4 space-y-4">
           {isConnected ? (
             isFirstLoad ? (
@@ -118,12 +177,14 @@ export function AgentChat() {
                     key={`${message.role}-${i}`}
                     message={message}
                     onComplete={(suggestedAnswers) => {
+                      console.log('onComplete agent message');
                       if (suggestedAnswers) {
                         setSuggestedAnswers(suggestedAnswers);
                       }
                     }}
                   />
                 ))}
+                {loading && <LoadingMessage />}
               </div>
             )
           ) : (

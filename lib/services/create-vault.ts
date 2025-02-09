@@ -5,7 +5,7 @@ export async function createVault(
   userAddress: Address,
   strategy: PortfolioStrategy,
 ): Promise<VaultResponse> {
-  const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/vault`, {
+  const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/vault`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',

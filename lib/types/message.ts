@@ -6,6 +6,7 @@ export type MessageComponentType =
   | 'default'
   | 'opportunity'
   | 'analysis'
+  | 'get-strategy'
   | 'error';
 
 export interface Message<T> {

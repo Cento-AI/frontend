@@ -5,7 +5,7 @@ export async function applyStrategy(
   userAddress: Address,
 ): Promise<PortfolioRebalance> {
   const response = await fetch(
-    `${process.env.NEXT_PUBLIC_API_URL}/api/agent/apply-strategy`,
+    `${process.env.NEXT_PUBLIC_API_URL}/agent/apply-strategy`,
     {
       method: 'POST',
       headers: {
